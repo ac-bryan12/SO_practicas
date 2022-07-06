@@ -10,17 +10,17 @@ int num;
 sem_t sem;
 float t_time;
 pthread_t *hilos;
-struct timeval start;
-struct timeval end;
+struct timespec start;
+struct timespec end;
 
-float time_diff(struct timeval *start, struct timeval *end){
-	return (end->tv_sec - start->tv_sec) + 1e-6*(end->tv_usec - start->tv_usec);
+float time_diff(struct timespec *start, struct timespec *end){
+	return (end->tv_sec - start->tv_sec) + 1e-9*(end->tv_nsec - start->tv_nsec);
 }
 
 void *decrementar(void *args){
 	sem_wait(&sem);
 	num--;
-	gettimeofday(&end,NULL);
+	clock_gettime(CLOCK_REALTIME,&end);
 	float time_h = time_diff(&start,&end);
 	t_time += time_h;
 	sem_post(&sem);
@@ -38,7 +38,7 @@ int main(int argc,char *argv[]){
 	sem_init(&sem,0,1);
 	hilos = malloc(c_num * sizeof(pthread_t));
 	for(int i = 0; i<c_num-1;i++){
-		gettimeofday(&start,NULL);
+		clock_gettime(CLOCK_REALTIME,&start);
 		pthread_create(&hilos[i],NULL,decrementar,NULL);
 	}
 	for(int i = 0;i<c_num-1;i++){
@@ -49,7 +49,4 @@ int main(int argc,char *argv[]){
 	
 	
 }
-
-
-
 

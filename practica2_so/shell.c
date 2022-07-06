@@ -6,7 +6,7 @@
 
 #define STDIN 0
 #define STDOUT 1
-void imprimir();
+void imprimir(int fd);
 
 int main(){
 	char option[200];
